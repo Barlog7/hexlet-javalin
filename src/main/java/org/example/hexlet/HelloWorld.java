@@ -2,7 +2,7 @@ package org.example.hexlet;
 
 import io.javalin.Javalin;
 
-public class HelloWorld {
+/*public class HelloWorld {
     public static void main(String[] args) {
         // Создаем приложение
         var app = Javalin.create(config -> {
@@ -11,5 +11,16 @@ public class HelloWorld {
         // Описываем, что загрузится по адресу /
         app.get("/", ctx -> ctx.result("Hello World"));
         app.start(7070); // Стартуем веб-сервер
+    }
+}*/
+
+public class HelloWorld {
+    public static void main(String[] args) {
+        var app = Javalin.create(config -> {
+            config.bundledPlugins.enableDevLogging();
+        });
+        app.get("/users", ctx -> ctx.result("GET /users"));
+        app.post("/users", ctx -> ctx.result("POST /users"));
+        app.start(7070);
     }
 }
