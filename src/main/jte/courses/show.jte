@@ -1,7 +1,9 @@
 @import org.example.hexlet.dto.courses.CoursePage
 @param CoursePage page
 
-<main>
-    <h1>${page.getCourse().getName()}</h1>
-    <p>${page.getCourse().getDescription()}</p>
-</main>
+@template.layout.page(
+content = @`
+    <div>${page.getCourse().getName()}</div>
+    <div>${page.getCourse().getDescription()}</div>
+`
+)
