@@ -1,24 +1,59 @@
 package org.example.hexlet;
 
 import io.javalin.Javalin;
-import io.javalin.http.Context;
-import io.javalin.http.NotFoundResponse;
+import io.javalin.rendering.template.JavalinJte;
+import static io.javalin.rendering.template.TemplateUtil.model;
+import org.example.hexlet.model.Course;
+import org.example.hexlet.dto.courses.CoursePage;
+import org.example.hexlet.dto.courses.CoursesPage;
 
-/*public class HelloWorld {
-    public static void main(String[] args) {
-        // Создаем приложение
-        var app = Javalin.create(config -> {
-            config.bundledPlugins.enableDevLogging();
-        });
-        // Описываем, что загрузится по адресу /
-        app.get("/", ctx -> ctx.result("Hello World"));
-        app.start(7070); // Стартуем веб-сервер
-    }
-}*/
+import java.util.List;
 
 public class HelloWorld {
     public static void main(String[] args) {
         var app = Javalin.create(config -> {
+            config.bundledPlugins.enableDevLogging();
+            config.fileRenderer(new JavalinJte());
+        });
+        Course course1 = new Course("первый курс", "изучение основ Java");
+        course1.setId(1);
+        Course course2 = new Course("втрой курс", "изучение SQL");
+        course2.setId(2);
+        Course course3 = new Course("третий курс", "изучение html");
+        course3.setId(3);
+        //CoursePage coursePage = new CoursePage(List.of(course1,course2,course3), "Список курсов");
+
+        app.get("/courses", ctx -> {
+            var courses = List.of(course1,course2,course3);
+            var header = "Курсы по программированию";
+            var page = new CoursesPage(courses, header);
+            ctx.render("index.jte", model("page", page));
+        });
+
+        app.get("/courses/{id}", ctx -> {
+            var id = ctx.pathParam("id");
+            var course = new Course("","");
+            switch (id) {
+                case "1":
+                    course = course1;
+                    break;
+                case "2":
+                    course = course2;
+                    break;
+                default:
+                    course = course3;
+                    break;
+            }
+            //var course = "/* Курс извлекается из базы данных. Как работать с базами данных мы разберем в следующих уроках */";
+            var page = new CoursePage(course);
+            ctx.render("courses/show.jte", model("page", page));
+        });
+
+        app.start(7070);
+    }
+
+}
+ /*       var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
         });
         app.get("/users", ctx -> ctx.result("GET /users"));
@@ -35,6 +70,18 @@ public class HelloWorld {
             ctx.result("user ID: " + ctx.pathParam("id"));
             ctx.result("post ID: " + ctx.pathParam("postId"));
         });
+
+        app.get("/", ctx -> ctx.render("index.jte"));
+
+*/
+/*        app.get("/courses/{id}", ctx -> {
+            var id = ctx.pathParam("id");
+            var course = *//* Курс извлекается из базы данных *//*
+                    // Предполагаем, что у курса есть метод getName()
+                    ctx.result("<h1>" + course.getName() + "</h1>");
+        });*/
+
+
        /* app.get("/courses/{id}", ctx -> {
             ctx.result("Course ID: " + ctx.pathParam("id"));
         });
@@ -47,9 +94,9 @@ public class HelloWorld {
             ctx.result("Lesson ID: " + ctx.pathParam("id"));
         });*/
 
-        app.start(7070);
+/*        app.start(7070);
     }
-}
+}*/
 /*    public static void show(Context ctx) {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         // Позже мы разберем эти конструкции подробнее
