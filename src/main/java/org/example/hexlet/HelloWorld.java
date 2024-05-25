@@ -3,9 +3,15 @@ package org.example.hexlet;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import static io.javalin.rendering.template.TemplateUtil.model;
+
+import org.apache.commons.text.StringEscapeUtils;
+
+import org.example.hexlet.dto.users.UserPage;
+import org.example.hexlet.dto.users.UsersPage;
 import org.example.hexlet.model.Course;
 import org.example.hexlet.dto.courses.CoursePage;
 import org.example.hexlet.dto.courses.CoursesPage;
+import org.example.hexlet.model.User;
 
 import java.util.List;
 
@@ -21,13 +27,27 @@ public class HelloWorld {
         course2.setId(2);
         Course course3 = new Course("третий курс", "изучение html");
         course3.setId(3);
+
+        User user1 = new User("Ivan", "Ivanov", "ivanov@mail.com");
+        user1.setId(1);
+        User user2 = new User("Petr", "Petrov", "pertov@ya.ru");
+        user2.setId(2);
+        User user3 = new User("Maria", "Marova", "marova@ya.ru");
+        user3.setId(3);
         //CoursePage coursePage = new CoursePage(List.of(course1,course2,course3), "Список курсов");
 
         app.get("/courses", ctx -> {
             var courses = List.of(course1,course2,course3);
             var header = "Курсы по программированию";
             var page = new CoursesPage(courses, header);
-            ctx.render("index.jte", model("page", page));
+            ctx.render("courses/index.jte", model("page", page));
+        });
+
+        app.get("/users", ctx -> {
+            var users = List.of(user1,user2,user3);
+            var header = "Пользователи";
+            var page = new UsersPage(users, header);
+            ctx.render("users/index.jte", model("page", page));
         });
 
         app.get("/courses/{id}", ctx -> {
@@ -47,6 +67,32 @@ public class HelloWorld {
             //var course = "/* Курс извлекается из базы данных. Как работать с базами данных мы разберем в следующих уроках */";
             var page = new CoursePage(course);
             ctx.render("courses/show.jte", model("page", page));
+        });
+
+        app.get("/users/{id}", ctx -> {
+            var id = ctx.pathParam("id");
+            var escapedId = StringEscapeUtils.escapeHtml4(id);
+            var user = new User("","", "");
+            switch (id) {
+                case "1":
+                    user = user1;
+                    break;
+                case "2":
+                    user = user2;
+                    break;
+                default:
+                    user = user3;
+                    break;
+            }
+            //var course = "/* Курс извлекается из базы данных. Как работать с базами данных мы разберем в следующих уроках */";
+            var page = new UserPage(user);
+            ctx.render("users/show.jte", model("page", page));
+        });
+
+        app.get("/users_security/{id}", ctx -> {
+            var id = ctx.pathParam("id");
+            var escapedId = StringEscapeUtils.escapeHtml4(id);
+            ctx.result("result is " + escapedId);
         });
 
         app.start(7070);

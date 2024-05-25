@@ -14,6 +14,8 @@
     <%--<a href="/users">Users</a>--%>
     <h2>Курсы</h2>
     <a href="/courses">Courses</a>
+    <h2>Пользователи</h2>
+    <a href="/users">Users</a>
 </p>
 ${content}
 @if (footer != null)
