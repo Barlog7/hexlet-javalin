@@ -13,6 +13,7 @@ import org.example.hexlet.dto.courses.CoursePage;
 import org.example.hexlet.dto.courses.CoursesPage;
 import org.example.hexlet.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HelloWorld {
@@ -23,7 +24,7 @@ public class HelloWorld {
         });
         Course course1 = new Course("первый курс", "изучение основ Java");
         course1.setId(1);
-        Course course2 = new Course("втрой курс", "изучение SQL");
+        Course course2 = new Course("второй курс", "изучение SQL");
         course2.setId(2);
         Course course3 = new Course("третий курс", "изучение html");
         course3.setId(3);
@@ -37,9 +38,16 @@ public class HelloWorld {
         //CoursePage coursePage = new CoursePage(List.of(course1,course2,course3), "Список курсов");
 
         app.get("/courses", ctx -> {
-            var courses = List.of(course1,course2,course3);
+            var coursesAll = List.of(course1,course2,course3);
             var header = "Курсы по программированию";
-            var page = new CoursesPage(courses, header);
+            var term = ctx.queryParam("term");
+            List<Course> courses;
+            if (term != null) {
+                courses = fitlerCourse(coursesAll, term);
+            } else {
+                courses = new ArrayList<>(coursesAll);
+            }
+            var page = new CoursesPage(courses, header, term);
             ctx.render("courses/index.jte", model("page", page));
         });
 
@@ -96,6 +104,14 @@ public class HelloWorld {
         });
 
         app.start(7070);
+    }
+    public static List<Course> fitlerCourse(List<Course> courses, String seek) {
+        //ArrayList<Course> findCourses;
+        return courses.stream().filter(c -> c.getDescription().contains(seek) || c.getName().contains(seek)).toList();
+       /* for (var course : courses) {
+            course.getDescription().contains(seek);
+        }*/
+
     }
 
 }
