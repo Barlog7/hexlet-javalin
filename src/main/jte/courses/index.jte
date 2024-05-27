@@ -5,8 +5,14 @@
 content = @`
 
     <form action="/courses" method="get">
-        <%--<input type="search" required name="term">--%>
+
         <input type="search" name="term" value="${page.getTerm()}" />
+        <input type="submit" value="Искать">
+    </form>
+
+    <form action="/courses" method="get">
+
+        <input type="search" name="term2" value="${page.getTerm2()}" />
         <input type="submit" value="Искать">
     </form>
 

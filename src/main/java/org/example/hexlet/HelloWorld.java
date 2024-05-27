@@ -41,13 +41,20 @@ public class HelloWorld {
             var coursesAll = List.of(course1,course2,course3);
             var header = "Курсы по программированию";
             var term = ctx.queryParam("term");
+            var term2 = ctx.queryParam("term2");
             List<Course> courses;
+            List<Course> coursesTemp;
             if (term != null) {
-                courses = fitlerCourse(coursesAll, term);
+                coursesTemp = fitlerCourse(coursesAll, term);
             } else {
-                courses = new ArrayList<>(coursesAll);
+                coursesTemp = new ArrayList<>(coursesAll);
             }
-            var page = new CoursesPage(courses, header, term);
+            if (term2 != null) {
+                courses = fitlerCourseDesc(coursesTemp, term2);
+            } else {
+                courses = new ArrayList<>(coursesTemp);
+            }
+            var page = new CoursesPage(courses, header, term, term2);
             ctx.render("courses/index.jte", model("page", page));
         });
 
@@ -107,7 +114,16 @@ public class HelloWorld {
     }
     public static List<Course> fitlerCourse(List<Course> courses, String seek) {
         //ArrayList<Course> findCourses;
-        return courses.stream().filter(c -> c.getDescription().contains(seek) || c.getName().contains(seek)).toList();
+        return courses.stream().filter(c -> c.getName().contains(seek)).toList();
+       /* for (var course : courses) {
+            course.getDescription().contains(seek);
+        }*/
+
+    }
+
+    public static List<Course> fitlerCourseDesc(List<Course> courses, String seek) {
+        //ArrayList<Course> findCourses;
+        return courses.stream().filter(c -> c.getDescription().contains(seek)).toList();
        /* for (var course : courses) {
             course.getDescription().contains(seek);
         }*/
