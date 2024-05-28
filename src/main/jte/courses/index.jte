@@ -7,13 +7,13 @@ content = @`
     <form action="/courses" method="get">
 
         <input type="search" name="term" value="${page.getTerm()}" />
-        <input type="submit" value="Искать">
+        <input type="submit" value="Искать по названию курса">
     </form>
 
     <form action="/courses" method="get">
 
         <input type="search" name="term2" value="${page.getTerm2()}" />
-        <input type="submit" value="Искать">
+        <input type="submit" value="Искать по описанию курса">
     </form>
 
 

@@ -16,7 +16,7 @@ public final class JteindexGenerated {
 					jteOutput.setContext("input", null);
 					jteOutput.writeContent("\"");
 				}
-				jteOutput.writeContent(" />\n        <input type=\"submit\" value=\"Искать\">\n    </form>\n\n    <form action=\"/courses\" method=\"get\">\n\n        <input type=\"search\" name=\"term2\"");
+				jteOutput.writeContent(" />\n        <input type=\"submit\" value=\"Искать по названию курса\">\n    </form>\n\n    <form action=\"/courses\" method=\"get\">\n\n        <input type=\"search\" name=\"term2\"");
 				var __jte_html_attribute_1 = page.getTerm2();
 				if (gg.jte.runtime.TemplateUtils.isAttributeRendered(__jte_html_attribute_1)) {
 					jteOutput.writeContent(" value=\"");
@@ -25,7 +25,7 @@ public final class JteindexGenerated {
 					jteOutput.setContext("input", null);
 					jteOutput.writeContent("\"");
 				}
-				jteOutput.writeContent(" />\n        <input type=\"submit\" value=\"Искать\">\n    </form>\n\n\n    ");
+				jteOutput.writeContent(" />\n        <input type=\"submit\" value=\"Искать по описанию курса\">\n    </form>\n\n\n    ");
 				for (var course : page.getCourses()) {
 					jteOutput.writeContent("\n        ");
 					jteOutput.writeContent("\n        <h2><a href=\"/courses/");

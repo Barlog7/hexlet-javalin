@@ -9,16 +9,18 @@ import lombok.ToString;
 @Setter
 @ToString
 public class User {
-    private int id;
+    private Long id;
 
     @ToString.Include
-    private String firstName;
-    private String lastName;
+    //private String firstName;
+    private String name;
     private String mail;
+    private String password;
 
-    public User(String firstName, String lastName, String mail) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String name, String mail, String password) {
+        //this.firstName = firstName;
+        this.name = name;
         this.mail = mail;
+        this.password = password;
     }
 }

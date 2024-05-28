@@ -12,6 +12,8 @@ import org.example.hexlet.model.Course;
 import org.example.hexlet.dto.courses.CoursePage;
 import org.example.hexlet.dto.courses.CoursesPage;
 import org.example.hexlet.model.User;
+import org.example.hexlet.repository.CourseRepository;
+import org.example.hexlet.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,22 +25,30 @@ public class HelloWorld {
             config.fileRenderer(new JavalinJte());
         });
         Course course1 = new Course("первый курс", "изучение основ Java");
-        course1.setId(1);
+        CourseRepository.save(course1);
+        //course1.setId(1);
         Course course2 = new Course("второй курс", "изучение SQL");
-        course2.setId(2);
+        CourseRepository.save(course2);
+        //course2.setId(2);
         Course course3 = new Course("третий курс", "изучение html");
-        course3.setId(3);
+        CourseRepository.save(course3);
+        //course3.setId(3);
 
-        User user1 = new User("Ivan", "Ivanov", "ivanov@mail.com");
-        user1.setId(1);
-        User user2 = new User("Petr", "Petrov", "pertov@ya.ru");
-        user2.setId(2);
-        User user3 = new User("Maria", "Marova", "marova@ya.ru");
-        user3.setId(3);
+        User user1 = new User("Ivanov", "ivanov@mail.com", "123");
+        UserRepository.save(user1);
+        //CourseRepository.save(course);
+        //user1.setId(1L);
+        User user2 = new User("Petrov", "pertov@ya.ru", "ert");
+        UserRepository.save(user2);
+        //user2.setId(2L);
+        User user3 = new User("Marova", "marova@ya.ru", "111111");
+        UserRepository.save(user3);
+        //user3.setId(3L);
         //CoursePage coursePage = new CoursePage(List.of(course1,course2,course3), "Список курсов");
 
         app.get("/courses", ctx -> {
-            var coursesAll = List.of(course1,course2,course3);
+            //var coursesAll = List.of(course1,course2,course3);
+            var coursesAll =CourseRepository.getEntities();
             var header = "Курсы по программированию";
             var term = ctx.queryParam("term");
             var term2 = ctx.queryParam("term2");
@@ -58,8 +68,13 @@ public class HelloWorld {
             ctx.render("courses/index.jte", model("page", page));
         });
 
+        app.get("/courses/build", ctx -> {
+            ctx.render("courses/build.jte");
+        });
+
         app.get("/users", ctx -> {
-            var users = List.of(user1,user2,user3);
+            var users =UserRepository.getEntities();
+            //var users = List.of(user1,user2,user3);
             var header = "Пользователи";
             var page = new UsersPage(users, header);
             ctx.render("users/index.jte", model("page", page));
@@ -82,6 +97,12 @@ public class HelloWorld {
             //var course = "/* Курс извлекается из базы данных. Как работать с базами данных мы разберем в следующих уроках */";
             var page = new CoursePage(course);
             ctx.render("courses/show.jte", model("page", page));
+        });
+
+
+
+        app.get("/users/build", ctx -> {
+            ctx.render("users/build.jte");
         });
 
         app.get("/users/{id}", ctx -> {
@@ -109,6 +130,37 @@ public class HelloWorld {
             var escapedId = StringEscapeUtils.escapeHtml4(id);
             ctx.result("result is " + escapedId);
         });
+
+        app.post("/users", ctx -> {
+/*            var name = ctx.formParam("name");
+            //var lastname = ctx.formParam("lastname");
+            var email = ctx.formParam("email");
+            var password = ctx.formParam("password");*/
+            var name = ctx.formParam("name").trim();
+            var email = ctx.formParam("email").trim().toLowerCase();
+            var password = ctx.formParam("password");
+
+            var passwordConfirmation = ctx.formParam("passwordConfirmation");
+
+            var user = new User(name, email, password);
+            UserRepository.save(user);
+            ctx.redirect("/users");
+        });
+
+        app.post("/courses", ctx -> {
+/*            var name = ctx.formParam("name");
+            //var lastname = ctx.formParam("lastname");
+            var email = ctx.formParam("email");
+            var password = ctx.formParam("password");*/
+            var name = ctx.formParam("name").trim();
+            var description = ctx.formParam("description").trim().toLowerCase();
+
+            Course course = new Course(name, description);
+            CourseRepository.save(course);
+            ctx.redirect("/courses");
+        });
+
+
 
         app.start(7070);
     }
