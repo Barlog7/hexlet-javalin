@@ -28,6 +28,9 @@ public class CourseRepository {
         return maybeCourse;
     }
 
+    public static void delete(Long id) {
+
+    }
     public static List<Course> getEntities() {
         return entities;
     }
