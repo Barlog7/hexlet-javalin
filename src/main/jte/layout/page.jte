@@ -1,4 +1,5 @@
 @import gg.jte.Content
+@import org.example.hexlet.NamedRoutes
 @param Content content
 @param Content footer = null
 
@@ -13,9 +14,9 @@
 <p>
     <%--<a href="/users">Users</a>--%>
     <h2>Курсы</h2>
-    <a href="/courses">Courses</a>
+    <a href="${NamedRoutes.coursesPath()}">Courses</a>
     <h2>Пользователи</h2>
-    <a href="/users">Users</a>
+    <a href="${NamedRoutes.usersPath()}">Users</a>
 </p>
 ${content}
 @if (footer != null)

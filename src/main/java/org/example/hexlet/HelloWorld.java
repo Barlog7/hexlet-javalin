@@ -49,7 +49,7 @@ public class HelloWorld {
         //user3.setId(3L);
         //CoursePage coursePage = new CoursePage(List.of(course1,course2,course3), "Список курсов");
 
-        app.get("/courses", ctx -> {
+        app.get(NamedRoutes.coursesPath(), ctx -> {
             //var coursesAll = List.of(course1,course2,course3);
             var coursesAll =CourseRepository.getEntities();
             var header = "Курсы по программированию";
@@ -71,11 +71,12 @@ public class HelloWorld {
             ctx.render("courses/index.jte", model("page", page));
         });
 
-        app.get("/courses/build", ctx -> {
-            ctx.render("courses/build.jte");
+        app.get(NamedRoutes.buildCoursesPath(), ctx -> {
+            var page = new BuildCoursePage();
+            ctx.render("courses/build.jte", model("page", page));
         });
 
-        app.get("/users", ctx -> {
+        app.get(NamedRoutes.usersPath(), ctx -> {
             var users =UserRepository.getEntities();
             //var users = List.of(user1,user2,user3);
             var header = "Пользователи";
@@ -83,7 +84,7 @@ public class HelloWorld {
             ctx.render("users/index.jte", model("page", page));
         });
 
-        app.get("/courses/{id}", ctx -> {
+        app.get(NamedRoutes.coursePath("{id}"), ctx -> {
             var id = ctx.pathParam("id");
             var course = new Course("","");
             switch (id) {
@@ -103,18 +104,13 @@ public class HelloWorld {
         });
 
 
-
-/*        app.get("/users/build", ctx -> {
-            ctx.render("users/build.jte");
-        });*/
-
-        app.get("/users/build", ctx -> {
+        app.get(NamedRoutes.buildUserPath(), ctx -> {
             var page = new BuildUserPage();
             ctx.render("users/build.jte", model("page", page));
         });
 
 
-        app.get("/users/{id}", ctx -> {
+        app.get(NamedRoutes.usersPath("{id}"), ctx -> {
             var id = ctx.pathParam("id");
             var escapedId = StringEscapeUtils.escapeHtml4(id);
             var user = new User("","", "");
@@ -134,29 +130,14 @@ public class HelloWorld {
             ctx.render("users/show.jte", model("page", page));
         });
 
-        app.get("/users_security/{id}", ctx -> {
+        app.get(NamedRoutes.usersSecPath("{id}"), ctx -> {
             var id = ctx.pathParam("id");
             var escapedId = StringEscapeUtils.escapeHtml4(id);
             ctx.result("result is " + escapedId);
         });
 
-/*        app.post("/users", ctx -> {
-*//*            var name = ctx.formParam("name");
-            //var lastname = ctx.formParam("lastname");
-            var email = ctx.formParam("email");
-            var password = ctx.formParam("password");*//*
-            var name = ctx.formParam("name").trim();
-            var email = ctx.formParam("email").trim().toLowerCase();
-            var password = ctx.formParam("password");
 
-            var passwordConfirmation = ctx.formParam("passwordConfirmation");
-
-            var user = new User(name, email, password);
-            UserRepository.save(user);
-            ctx.redirect("/users");
-        });*/
-
-        app.post("/users", ctx -> {
+        app.post(NamedRoutes.usersPath(), ctx -> {
             var name = ctx.formParam("name");
             var email = ctx.formParam("email");
 
@@ -172,7 +153,7 @@ public class HelloWorld {
 
                 var user = new User(name, email, password);
                 UserRepository.save(user);
-                ctx.redirect("/users");
+                ctx.redirect(NamedRoutes.usersPath());
             } catch (ValidationException e) {
                 var page = new BuildUserPage(name, email, e.getErrors());
                 ctx.render("users/build.jte", model("page", page));
@@ -180,7 +161,7 @@ public class HelloWorld {
         });
 
 
-        app.post("/courses", ctx -> {
+        app.post(NamedRoutes.coursesPath(), ctx -> {
 /*            var name = ctx.formParam("name");
             //var lastname = ctx.formParam("lastname");
             var email = ctx.formParam("email");
@@ -200,7 +181,7 @@ public class HelloWorld {
 
             Course course = new Course(name, description);
             CourseRepository.save(course);
-            ctx.redirect("/courses");
+            ctx.redirect(NamedRoutes.coursesPath());
             } catch (ValidationException e) {
                 var name = ctx.formParam("name").trim();
                 var description = ctx.formParam("description").trim().toLowerCase();
