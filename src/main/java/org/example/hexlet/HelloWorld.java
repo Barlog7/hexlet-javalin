@@ -9,6 +9,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import org.example.hexlet.controller.CoursesController;
 import org.example.hexlet.controller.UsersController;
+import org.example.hexlet.dto.MainPage;
 import org.example.hexlet.dto.courses.BuildCoursePage;
 import org.example.hexlet.dto.users.BuildUserPage;
 import org.example.hexlet.dto.users.UserPage;
@@ -52,6 +53,13 @@ public class HelloWorld {
         //CoursePage coursePage = new CoursePage(List.of(course1,course2,course3), "Список курсов");
 
 
+
+        app.get("/", ctx -> {
+            var visited = Boolean.valueOf(ctx.cookie("visited"));
+            var page = new MainPage(visited);
+            ctx.render("index.jte", model("page", page));
+            ctx.cookie("visited", String.valueOf(true));
+        });
 
         app.get("/users/build", UsersController::build);
         app.get("/users", UsersController::index);
