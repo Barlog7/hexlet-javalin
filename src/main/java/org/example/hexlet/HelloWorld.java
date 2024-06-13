@@ -3,25 +3,17 @@ package org.example.hexlet;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import static io.javalin.rendering.template.TemplateUtil.model;
-
-import io.javalin.validation.ValidationException;
-import org.apache.commons.text.StringEscapeUtils;
+import static org.example.hexlet.NamedRoutes.sessionsPath;
 
 import org.example.hexlet.controller.CoursesController;
+import org.example.hexlet.controller.SessionsController;
 import org.example.hexlet.controller.UsersController;
 import org.example.hexlet.dto.MainPage;
-import org.example.hexlet.dto.courses.BuildCoursePage;
-import org.example.hexlet.dto.users.BuildUserPage;
-import org.example.hexlet.dto.users.UserPage;
-import org.example.hexlet.dto.users.UsersPage;
 import org.example.hexlet.model.Course;
-import org.example.hexlet.dto.courses.CoursePage;
-import org.example.hexlet.dto.courses.CoursesPage;
 import org.example.hexlet.model.User;
 import org.example.hexlet.repository.CourseRepository;
 import org.example.hexlet.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HelloWorld {
@@ -54,12 +46,20 @@ public class HelloWorld {
 
 
 
-        app.get("/", ctx -> {
-            var visited = Boolean.valueOf(ctx.cookie("visited"));
-            var page = new MainPage(visited);
+/*        app.get("/", ctx -> {
+            //var visited = Boolean.valueOf(ctx.cookie("visited"));
+            //var page = new MainPage(visited);
             ctx.render("index.jte", model("page", page));
-            ctx.cookie("visited", String.valueOf(true));
+            //ctx.cookie("visited", String.valueOf(true));
+        });*/
+
+        app.get("/", ctx -> {
+            var page = new MainPage(ctx.sessionAttribute("currentUser"));
+            ctx.render("index.jte", model("page", page));
         });
+
+        app.get(sessionsPath(), SessionsController::build);
+        app.post(sessionsPath(), SessionsController::create);
 
         app.get("/users/build", UsersController::build);
         app.get("/users", UsersController::index);
