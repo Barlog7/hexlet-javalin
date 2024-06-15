@@ -3,7 +3,13 @@
 @param CoursesPage page
 
 @template.layout.page(
+page = page,
 content = @`
+
+<%--    @if(page.getFlash() != null)
+        <p>${page.getFlash()}</p>
+    @endif--%>
+
 
     <form action="${NamedRoutes.coursesPath()}" method="get">
 

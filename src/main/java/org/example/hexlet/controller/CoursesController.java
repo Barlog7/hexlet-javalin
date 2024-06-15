@@ -15,7 +15,15 @@ import io.javalin.http.NotFoundResponse;
 public class CoursesController {
     public static void index(Context ctx) {
         var courses = CourseRepository.getEntities();
+
+        //var flash = (String) ctx.consumeSessionAttribute("flash");
+        // Добавляем flash в определение CoursesPage
+        //var page = new CoursesPage(courses, term, flash);
+
+
         var page = new CoursesPage(courses, "courses", "", "");
+        page.setFlash(ctx.consumeSessionAttribute("flash"));
+        page.setStatus(ctx.consumeSessionAttribute("status"));
         ctx.render("courses/index.jte", model("page", page));
     }
 
@@ -38,10 +46,13 @@ public class CoursesController {
         var email = ctx.formParam("email");*/
         var name = ctx.formParam("name").trim();
         var description = ctx.formParam("description").trim().toLowerCase();
+
         //var password = ctx.formParam("password");
 
         var course = new Course(name, description);
         CourseRepository.save(course);
+        ctx.sessionAttribute("flash", "Course has been created!");
+        ctx.sessionAttribute("status", "ok");
         ctx.redirect(NamedRoutes.coursesPath());
     }
 
