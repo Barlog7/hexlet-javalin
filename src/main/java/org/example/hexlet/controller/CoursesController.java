@@ -2,15 +2,19 @@ package org.example.hexlet.controller;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
+import io.javalin.validation.ValidationException;
 import org.example.hexlet.NamedRoutes;
 import org.example.hexlet.dto.courses.BuildCoursePage;
 import org.example.hexlet.dto.courses.CoursePage;
 import org.example.hexlet.dto.courses.CoursesPage;
+import org.example.hexlet.dto.users.BuildUserPage;
 import org.example.hexlet.model.Course;
+import org.example.hexlet.model.User;
 import org.example.hexlet.repository.CourseRepository;
 
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
+import org.example.hexlet.repository.UserRepository;
 
 public class CoursesController {
     public static void index(Context ctx) {
@@ -49,11 +53,29 @@ public class CoursesController {
 
         //var password = ctx.formParam("password");
 
-        var course = new Course(name, description);
+        /*var course = new Course(name, description);
         CourseRepository.save(course);
         ctx.sessionAttribute("flash", "Course has been created!");
         ctx.sessionAttribute("status", "ok");
-        ctx.redirect(NamedRoutes.coursesPath());
+        ctx.redirect(NamedRoutes.coursesPath());*/
+        try {
+
+            name = ctx.formParamAsClass("name", String.class)
+                    .check(value ->value.length() >= 2, "Название не должно быть короче двух символов")
+                    .get();
+            description = ctx.formParamAsClass("description", String.class)
+                    .check(value ->value.length() >= 10, "Описание не должно быть короче десяти символов")
+                    .get();
+            var course = new Course(name, description);
+            CourseRepository.save(course);
+            ctx.sessionAttribute("flash", "Course has been created!");
+            ctx.sessionAttribute("status", "ok");
+            ctx.redirect(NamedRoutes.coursesPath());
+        } catch (ValidationException e) {
+            var page = new BuildCoursePage(name, description, e.getErrors());
+            ctx.sessionAttribute("status", "error");
+            ctx.render("courses/build.jte", model("page", page));
+        }
     }
 
     public static void edit(Context ctx) {
