@@ -19,6 +19,10 @@ repositories {
 }
 
 dependencies {
+    //для базы данных
+    implementation("com.h2database:h2:2.2.220")
+    implementation("com.zaxxer:HikariCP:5.0.1")
+
     // Версии зависимостей могут отличаться
     // Здесь мы сразу подключаем зависимости,
     // которые понадобятся во время обучения

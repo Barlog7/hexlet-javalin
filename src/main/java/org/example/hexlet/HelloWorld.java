@@ -1,5 +1,7 @@
 package org.example.hexlet;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import static io.javalin.rendering.template.TemplateUtil.model;
@@ -11,17 +13,50 @@ import org.example.hexlet.controller.UsersController;
 import org.example.hexlet.dto.MainPage;
 import org.example.hexlet.model.Course;
 import org.example.hexlet.model.User;
+import org.example.hexlet.repository.BaseRepository;
 import org.example.hexlet.repository.CourseRepository;
 import org.example.hexlet.repository.UserRepository;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class HelloWorld {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
+
+/*        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:hexlet_project;DB_CLOSE_DELAY=-1;");
+
+        var dataSource = new HikariDataSource(hikariConfig);
+        var url = HelloWorld.class.getClassLoader().getResourceAsStream("schema.sql");
+        var sql = new BufferedReader(new InputStreamReader(url))
+                .lines().collect(Collectors.joining("\n"));
+
+        try (var connection = dataSource.getConnection();
+             var statement = connection.createStatement()) {
+            statement.execute(sql);
+        }
+
+        BaseRepository.dataSource = dataSource;
+
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
+        });*/
+
+        /*var app = Javalin.create(config -> {
+            config.bundledPlugins.enableDevLogging();
             config.fileRenderer(new JavalinJte());
-        });
+        });*/
+
+        Javalin app = null;
+        try {
+            app = getApp();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         Course course1 = new Course("первый курс", "изучение основ Java");
         CourseRepository.save(course1);
         //course1.setId(1);
@@ -67,7 +102,7 @@ public class HelloWorld {
         app.post("/users", UsersController::create);
         app.get("/users/{id}/edit", UsersController::edit);
         app.patch("/users/{id}", UsersController::update);
-        app.delete("/users/{id}", UsersController::destroy);
+        //app.delete("/users/{id}", UsersController::destroy);
 
         app.get("/courses/build", CoursesController::build);
         app.get("/courses", CoursesController::index);
@@ -75,12 +110,12 @@ public class HelloWorld {
         app.post("/courses", CoursesController::create);
         app.get("/courses/{id}/edit", CoursesController::edit);
         app.patch("/courses/{id}", CoursesController::update);
-        app.delete("/courses/{id}", CoursesController::destroy);
-
+        //app.delete("/courses/{id}", CoursesController::destroy);
 
 
         app.start(7070);
     }
+
     public static List<Course> fitlerCourse(List<Course> courses, String seek) {
         //ArrayList<Course> findCourses;
         return courses.stream().filter(c -> c.getName().contains(seek)).toList();
@@ -99,5 +134,30 @@ public class HelloWorld {
 
     }
 
+    public static Javalin getApp() throws Exception {
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+
+        var dataSource = new HikariDataSource(hikariConfig);
+        // Получаем путь до файла в src/main/resources
+        var url = HelloWorld.class.getClassLoader().getResourceAsStream("schema.sql");
+        var sql = new BufferedReader(new InputStreamReader(url))
+                .lines().collect(Collectors.joining("\n"));
+
+        // Получаем соединение, создаем стейтмент и выполняем запрос
+        try (var connection = dataSource.getConnection();
+             var statement = connection.createStatement()) {
+            statement.execute(sql);
+        }
+        BaseRepository.dataSource = dataSource;
+
+        var app = Javalin.create(config -> {
+            config.bundledPlugins.enableDevLogging();
+            config.fileRenderer(new JavalinJte());
+        });
+        return app;
+
+
+    }
 }
 

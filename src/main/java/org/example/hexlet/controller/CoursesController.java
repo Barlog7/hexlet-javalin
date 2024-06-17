@@ -16,9 +16,17 @@ import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import org.example.hexlet.repository.UserRepository;
 
+import java.sql.SQLException;
+import java.util.List;
+
 public class CoursesController {
     public static void index(Context ctx) {
-        var courses = CourseRepository.getEntities();
+        List<Course> courses = null;
+        try {
+            courses = CourseRepository.getEntities();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         //var flash = (String) ctx.consumeSessionAttribute("flash");
         // Добавляем flash в определение CoursesPage
@@ -31,7 +39,7 @@ public class CoursesController {
         ctx.render("courses/index.jte", model("page", page));
     }
 
-    public static void show(Context ctx) {
+    public static void show(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var course = CourseRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
@@ -45,7 +53,7 @@ public class CoursesController {
         //ctx.render("courses/build.jte");
     }
 
-    public static void create(Context ctx) {
+    public static void create(Context ctx) throws SQLException {
         /*var name = ctx.formParam("name");
         var email = ctx.formParam("email");*/
         var name = ctx.formParam("name").trim();
@@ -78,7 +86,7 @@ public class CoursesController {
         }
     }
 
-    public static void edit(Context ctx) {
+    public static void edit(Context ctx) throws SQLException{
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var course = CourseRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Entity with id = " + id + " not found"));
@@ -87,7 +95,7 @@ public class CoursesController {
     }
 
 
-    public static void update(Context ctx) {
+    public static void update(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
 
         var name = ctx.formParam("name").trim();
@@ -101,9 +109,9 @@ public class CoursesController {
         ctx.redirect(NamedRoutes.coursesPath());
     }
 
-    public static void destroy(Context ctx) {
+/*    public static void destroy(Context ctx) {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         CourseRepository.delete(id);
         ctx.redirect(NamedRoutes.coursesPath());
-    }
+    }*/
 }

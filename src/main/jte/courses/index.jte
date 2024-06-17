@@ -6,11 +6,6 @@
 page = page,
 content = @`
 
-<%--    @if(page.getFlash() != null)
-        <p>${page.getFlash()}</p>
-    @endif--%>
-
-
     <form action="${NamedRoutes.coursesPath()}" method="get">
 
         <input type="search" name="term" value="${page.getTerm()}" />
@@ -25,7 +20,6 @@ content = @`
 
 
     @for(var course : page.getCourses())
-        <%--<div>${course.getName()}</div>--%>
         <h2><a href="${NamedRoutes.coursePath(course.getId())}">${course.getName()}</a></h2>
         <p>${course.getDescription()}</p>
     @endfor
